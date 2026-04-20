@@ -42,11 +42,6 @@ public class RagController {
     String ans =
         chatClient
             .prompt()
-//            .system(
-//                promptSystemSpec ->
-//                    promptSystemSpec
-//                        .text(fileResource)
-//                        .param("documents", similarDocsContent))
             .user(message)
             .advisors(advisorSpec -> advisorSpec.param("conversationId", username))
             .call()
