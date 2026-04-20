@@ -1,0 +1,63 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/testdb;DB_CLOSE_ON_EXIT=FALSE;
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      mode: always
+
+
+
+
+  docker:
+    compose:
+      stop:
+        command: down
+
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: Spring AI project
+
+  ai:
+#    ollama:
+#      enabled: true
+#      base-url: http://localhost:11434
+#      chat:
+#        options:
+#          model: llama3.2:3b
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-5-nano
+          temperature: 1
+          #max-tokens: 200
+    vectorstore:
+      qdrant:
+        initialize-schema: true
+        host: localhost
+        port: 6334
+        collection-name: spring-ai-collection
+
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+            #schema: classpath:memory-h2db.sql
+
+logging:
+  pattern:
+    console: "%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n"
+  level:
+    org.springframework.ai.chat.client.advisor: DEBUG
+

@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: Spring AI project
+
+  ai:
+    #ollama:
+    #  base-url: http://localhost:11434
+    #  chat:
+    #    options:
+    #      model: llama3.2:3b
+    openai:
+      api-key: test-key-12345
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.7
+
+logging:
+  pattern:
+    console: "%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n"
+  level:
+    org.springframework.ai.chat.client.advisor: DEBUG
+    org.springframework.ai: INFO
+
