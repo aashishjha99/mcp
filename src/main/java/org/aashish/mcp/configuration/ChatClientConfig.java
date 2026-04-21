@@ -14,9 +14,10 @@ import org.springframework.context.annotation.Primary;
 public class ChatClientConfig {
 
   /*
-    * Chat client bean for OpenAiChatModel with logging and token usage audit advisors.
-    *
-    */
+   * Chat client bean for OpenAiChatModel with logging and token usage audit advisors.
+   *
+   */
+
   @Bean()
   @Primary
   public ChatClient openAiChatClient(OpenAiChatModel openAiChatModeln) {

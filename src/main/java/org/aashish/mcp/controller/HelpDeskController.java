@@ -2,6 +2,8 @@ package org.aashish.mcp.controller;
 
 import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 
+import java.util.Map;
+import org.aashish.mcp.tools.HelpDeskTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -12,34 +14,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for chat memory.
+ * Controller for the helpdesk chat.
+ * @author aashishjha
  */
 @RestController
-@RequestMapping("/chat-memory")
-public class ChatMemoryController {
+@RequestMapping("/api/helpdesk")
+public class HelpDeskController {
 
-  private final ChatClient chatClient;
+  private final ChatClient openAiChatClient;
+  private final HelpDeskTools helpDeskTools;
 
-  public ChatMemoryController(@Qualifier("chatMemoryClient") ChatClient chatClient) {
-    this.chatClient = chatClient;
+  public HelpDeskController(
+      @Qualifier("helpDeskChatClient") ChatClient openAiChatClient, HelpDeskTools helpDeskTools) {
+    this.openAiChatClient = openAiChatClient;
+    this.helpDeskTools = helpDeskTools;
   }
 
   /**
-   * Chat with memory API
+   *  Endpoint for the helpdesk chat.
+   *
    * @param message
    * @param username
    * @return
    */
-  @GetMapping
-  public ResponseEntity<String> chatMemory(
+  @GetMapping("/chat")
+  public ResponseEntity<String> chatOpenAI(
       @RequestParam("message") String message, @RequestHeader("username") String username) {
-    return ResponseEntity.ok().body(
-        chatClient
+    return ResponseEntity.ok(
+        openAiChatClient
             .prompt()
+            .advisors(a -> a.param(CONVERSATION_ID, username))
             .user(message)
-            .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, username))
+            .tools(helpDeskTools)
+            .toolContext(Map.of("username", username))
             .call()
             .content());
   }
-
 }

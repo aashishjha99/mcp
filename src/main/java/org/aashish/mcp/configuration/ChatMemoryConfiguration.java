@@ -55,20 +55,23 @@ public class ChatMemoryConfiguration {
    */
   @Bean("chatMemoryClient")
   public ChatClient chatMemoryClient(
-      OpenAiChatModel ollamaChatModel,
+      OpenAiChatModel aiChatModel,
       ChatMemory chatMemory,
       RetrievalAugmentationAdvisor advisor) {
     Advisor loggerAdvisor = new SimpleLoggerAdvisor();
     Advisor tokenAdvisor = new TokenUsageAuditAdvisor();
     Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
     ChatClient.Builder chatClient =
-        ChatClient.builder(ollamaChatModel)
+        ChatClient.builder(aiChatModel)
             .defaultAdvisors(List.of(loggerAdvisor, tokenAdvisor, memoryAdvisor, advisor));
     return chatClient.build();
   }
 
-
-
+  /**
+   * Bean mehod for RAG
+   * @param vectorStore
+   * @return
+   */
   @Bean
   public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
     return RetrievalAugmentationAdvisor.builder()

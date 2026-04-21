@@ -4,6 +4,9 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
 
   h2:
     console:
@@ -13,11 +16,9 @@ spring:
     init:
       mode: always
 
-
-
-
   docker:
     compose:
+      enabled: true
       stop:
         command: down
 

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,14 @@ public class RagController {
     this.vectorStore = vectorStore;
   }
 
-  @GetMapping("/randome/chat")
+  /**
+   * API for random chat
+   * @param username
+   * @param message
+   * @return
+   * @throws IOException
+   */
+  @PostMapping("/randome/chat")
   public ResponseEntity<String> randomChat(
       @RequestHeader("username") String username, @RequestParam("message") String message)
       throws IOException {
