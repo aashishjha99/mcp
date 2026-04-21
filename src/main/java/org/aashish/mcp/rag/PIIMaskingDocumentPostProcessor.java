@@ -1,8 +1,6 @@
 package org.aashish.mcp.rag;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
