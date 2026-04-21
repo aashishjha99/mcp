@@ -3,6 +3,7 @@ package org.aashish.mcp.configuration;
 import java.util.List;
 import javax.sql.DataSource;
 import org.aashish.mcp.advisor.TokenUsageAuditAdvisor;
+import org.aashish.mcp.rag.PIIMaskingDocumentPostProcessor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -66,6 +67,8 @@ public class ChatMemoryConfiguration {
     return chatClient.build();
   }
 
+
+
   @Bean
   public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
     return RetrievalAugmentationAdvisor.builder()
@@ -75,6 +78,7 @@ public class ChatMemoryConfiguration {
                 .topK(3)
                 .vectorStore(vectorStore)
                 .build())
+        .documentPostProcessors(PIIMaskingDocumentPostProcessor.builder())
         .build();
   }
 }
