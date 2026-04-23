@@ -1,4 +1,19 @@
 services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Disable Spring Boot's internal docker-compose support when running inside Docker
+      - SPRING_DOCKER_COMPOSE_ENABLED=false
+      # Override the vector store host to point to the docker container name 'qdrant'
+      - SPRING_AI_VECTORSTORE_QDRANT_HOST=qdrant
+      - SPRING_AI_VECTORSTORE_QDRANT_PORT=6334
+      # Pass the OpenAI API key from your host machine's environment to the container
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - qdrant
+
   qdrant:
     image: 'qdrant/qdrant:latest'
     ports:

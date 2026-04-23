@@ -1,0 +1,85 @@
+# Qdrant Service (internal networking)
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant
+spec:
+  selector:
+    app: qdrant
+  ports:
+    - name: http
+      port: 6333
+      targetPort: 6333
+    - name: grpc
+      port: 6334
+      targetPort: 6334
+---
+# Qdrant Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qdrant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qdrant
+  template:
+    metadata:
+      labels:
+        app: qdrant
+    spec:
+      containers:
+        - name: qdrant
+          image: qdrant/qdrant:latest
+          ports:
+            - containerPort: 6333
+            - containerPort: 6334
+---
+# Spring App Service (exposed via NodePort so you can access it in browser)
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app
+spec:
+  type: NodePort
+  selector:
+    app: spring-app
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+---
+# Spring App Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          image: spring-ai-app:latest
+          imagePullPolicy: Never # Tells Kubernetes to use your locally built image
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DOCKER_COMPOSE_ENABLED
+              value: "false"
+            - name: SPRING_AI_VECTORSTORE_QDRANT_HOST
+              value: "qdrant"
+            - name: SPRING_AI_VECTORSTORE_QDRANT_PORT
+              value: "6334"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-secret
+                  key: OPENAI_API_KEY

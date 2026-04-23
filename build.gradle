@@ -43,11 +43,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation("org.springframework.ai:spring-ai-tika-document-reader")
 
-    implementation 'org.springframework.boot:spring-boot-docker-compose'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
     // optional (safe)
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    implementation('org.apache.httpcomponents.client5:httpclient5')
+   // implementation('org.apache.httpcomponents.client5:httpclient5')
 }
 
 dependencyManagement {
