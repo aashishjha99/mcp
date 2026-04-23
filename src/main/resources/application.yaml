@@ -8,6 +8,9 @@ spring:
     hibernate:
       ddl-auto: update
 
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
   h2:
     console:
       enabled: true
@@ -19,8 +22,10 @@ spring:
   docker:
     compose:
       enabled: true
+      lifecycle-management: start_and_stop
       stop:
         command: down
+      file: docker-compose.yml
 
   main:
     allow-bean-definition-overriding: true
@@ -29,14 +34,11 @@ spring:
     name: Spring AI project
 
   ai:
-#    ollama:
-#      enabled: true
-#      base-url: http://localhost:11434
-#      chat:
-#        options:
-#          model: llama3.2:3b
     openai:
       api-key: ${OPENAI_API_KEY}
+      embedding:
+        options:
+          model: text-embedding-ada-002
       chat:
         options:
           model: gpt-5-nano

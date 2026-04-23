@@ -28,4 +28,11 @@ public class TimechatConfiguration {
             .defaultAdvisors(List.of(loggerAdvisor, tokenAdvisor, memoryAdvisor));
     return chatClient.build();
   }
+
+  /**
+  @Bean
+  ToolExecutionExceptionProcessor processor() {
+    return new DefaultToolExecutionExceptionProcessor(true);
+  }
+  */
 }
