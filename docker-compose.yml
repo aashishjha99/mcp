@@ -11,11 +11,31 @@ services:
       - SPRING_AI_VECTORSTORE_QDRANT_PORT=6334
       # Pass the OpenAI API key from your host machine's environment to the container
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Database connection settings
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=spring_ai_db
+      - DB_USER=root
+      - DB_PASSWORD=root
     depends_on:
       - qdrant
+      - mysql
 
   qdrant:
     image: 'qdrant/qdrant:latest'
     ports:
       - '6333:6333'
       - '6334:6334'
+
+  mysql:
+    image: 'mysql:8.0'
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=spring_ai_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

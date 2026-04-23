@@ -1,8 +1,10 @@
-CREATE TABLE IF NOT EXISTS SPRING_AI_CHAT_MEMORY (
-                                                     conversation_id VARCHAR(255) NOT NULL,
-    content LONGVARCHAR NOT NULL,
-    type VARCHAR(10) NOT NULL,
-    "timestamp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-    );
-
-CREATE INDEX IF NOT EXISTS SPRING_AI_CHAT_MEMORY_CONVERSATION_ID_TIMESTAMP_IDX ON SPRING_AI_CHAT_MEMORY(conversation_id, "timestamp" DESC);
+CREATE TABLE SPRING_AI_CHAT_MEMORY (
+                                       message_id BIGINT NOT NULL AUTO_INCREMENT,
+                                       conversation_id VARCHAR(255) NOT NULL,
+                                       content TEXT,
+                                       type VARCHAR(50),
+                                       `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                       PRIMARY KEY (message_id),
+                                       INDEX SPRING_AI_CHAT_MEMORY_CONV_IDX (conversation_id),
+                                       INDEX SPRING_AI_CHAT_MEMORY_CONV_TS_IDX (conversation_id, `timestamp`)
+);

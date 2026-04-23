@@ -25,10 +25,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ChatMemoryConfiguration {
 
-  /*
-   * JdbcChatMemoryRepository bean that uses a DataSource to connect to a database.
-   * This repository will be used to store conversation history for the ChatMemory implementation.
+  /**
+   * Configures and provides a {@link JdbcChatMemoryRepository} bean.
+   * This repository is responsible for persisting and retrieving chat messages
+   * to and from a relational database, using the provided {@link DataSource}.
+   * It serves as the underlying storage mechanism for the {@link ChatMemory} implementation.
    *
+   * @param dataSource The {@link DataSource} used to establish database connections.
+   * @return A fully configured {@link JdbcChatMemoryRepository} instance.
    */
   @Bean
   public JdbcChatMemoryRepository jdbcChatMemoryRepository(DataSource dataSource) {

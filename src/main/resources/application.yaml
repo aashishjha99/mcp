@@ -1,22 +1,16 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./data/testdb;DB_CLOSE_ON_EXIT=FALSE;
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:spring_ai_db}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # Let JPA handle schema updates based on your entities
 
   lifecycle:
     timeout-per-shutdown-phase: 30s
 
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
   sql:
     init:
       mode: always
@@ -49,17 +43,16 @@ spring:
     vectorstore:
       qdrant:
         initialize-schema: true
-        host: localhost
-        port: 6334
+        host: ${SPRING_AI_VECTORSTORE_QDRANT_HOST:localhost}
+        port: ${SPRING_AI_VECTORSTORE_QDRANT_PORT:6334}
         collection-name: spring-ai-collection
 
     chat:
       memory:
         repository:
           jdbc:
-            initialize-schema: always
-            #schema: classpath:memory-h2db.sql
-
+            initialize-schema: always # Disable Spring AI JDBC chat memory schema initialization
+            #schema: classpath:memory-h2db.sql # This was likely H2 specific
 logging:
   pattern:
     console: "%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n"
