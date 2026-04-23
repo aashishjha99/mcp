@@ -17,10 +17,4 @@ public class SpringAiProjectApplication {
   public static void main(String[] args) {
     SpringApplication.run(SpringAiProjectApplication.class, args);
   }
-
-  @PostConstruct
-  public void check() { // ✅ no args
-    String key = env.getProperty("spring.ai.openai.api-key");
-    System.out.println("KEY = " + key);
-  }
 }
