@@ -3,7 +3,6 @@ package org.aashish.mcp.rag;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TextSplitter;

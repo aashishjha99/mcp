@@ -12,6 +12,12 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for setting up the Timechat application.
+ *
+ * @author ajha
+ */
+
 @Configuration
 public class TimechatConfiguration {
 

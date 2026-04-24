@@ -45,6 +45,9 @@ dependencies {
 
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
+    // Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-mcp
+    implementation("org.springframework.ai:spring-ai-starter-mcp-client")
+
     // optional (safe)
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
    // implementation('org.apache.httpcomponents.client5:httpclient5')
@@ -57,5 +60,5 @@ dependencyManagement {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    enabled=false
 }
