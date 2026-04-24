@@ -30,15 +30,6 @@ spring:
     name: Spring AI project
 
   ai:
-    mcp:
-      client:
-        stdio:
-          servers-configuration: classpath:mcp-servers.json
-#        sse:
-#          connections:
-#            local:
-#              url: http://localhost:8090
-
     openai:
       api-key: ${OPENAI_API_KEY}
       embedding:
@@ -67,4 +58,3 @@ logging:
     console: "%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n"
   level:
     org.springframework.ai.chat.client.advisor: DEBUG
-    org.springframework.ai.mcp : DEBUG

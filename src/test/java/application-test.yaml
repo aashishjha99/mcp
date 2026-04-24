@@ -21,8 +21,6 @@ spring:
     name: Spring AI project
 
   ai:
-    mcp:
-      enabled: false
     #ollama:
     #  base-url: http://localhost:11434
     #  chat:
@@ -37,8 +35,6 @@ spring:
     vectorstore:
       qdrant:
         enabled: false
-
-
 
 
 logging:
