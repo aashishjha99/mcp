@@ -8,7 +8,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
-@Component
+// @Component // Disabled to prevent interference with HR data
 public class RandomDataLoader implements loadDataInVectorDatabase {
 
   private final VectorStore vectorStore;
