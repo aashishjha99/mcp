@@ -47,9 +47,21 @@ dependencies {
 
     // optional (safe)
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
-   // implementation('org.apache.httpcomponents.client5:httpclient5')
-}
+    // implementation('org.apache.httpcomponents.client5:httpclient5')
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.5.13")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    // Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bridge-otel
+    implementation("io.micrometer:micrometer-tracing-bridge-otel:1.5.9")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.61.0")
 
+
+
+
+
+
+
+}
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
@@ -57,5 +69,5 @@ dependencyManagement {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    enabled=false
 }

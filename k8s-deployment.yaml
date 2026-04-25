@@ -31,24 +31,81 @@ spec:
     spec:
       containers:
         - name: qdrant
-          image: qdrant/qdrant:latest  # Pin to a specific version for stability
+          image: qdrant/qdrant:1.9.0 # Pin to a specific version for stability
           ports:
             - containerPort: 6333
             - containerPort: 6334
 ---
-# MySQL Service (internal networking)
+# Prometheus ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s # How frequently to scrape targets by default.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds.
+
+    scrape_configs:
+      - job_name: 'spring-ai'
+        metrics_path: '/actuator/prometheus'
+        scrape_interval: 15s
+        static_configs:
+          - targets: ['spring-app:8080'] # Use the Kubernetes service name for the Spring app
+---
+# Prometheus Service
 apiVersion: v1
 kind: Service
 metadata:
+  name: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+# Prometheus Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.39.0
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml # Mount only the file, not the directory
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            name: prometheus-config
+---
+# MySQL Service (internal networking)
+apiVersion: v1
+kind: Service # Changed type from NodePort to default ClusterIP for security
+metadata:
   name: mysql
 spec:
-  type: NodePort   # 👈 ADD THIS LINE
   selector:
     app: mysql
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 30006
 ---
 # MySQL Deployment
 apiVersion: apps/v1

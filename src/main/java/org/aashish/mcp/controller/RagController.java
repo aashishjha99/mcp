@@ -27,8 +27,8 @@ public class RagController {
   private final ChatClient chatClient;
   private final VectorStore vectorStore;
 
-  @Value("classpath:static/systemPromptRandomDataTemplate.st")
-  private Resource fileResource;
+//  @Value("classpath:static/systemPromptRandomDataTemplate.st")
+//  private Resource fileResource;
 
   public RagController(
       @Qualifier("chatMemoryClient") ChatClient chatClient, VectorStore vectorStore) {
