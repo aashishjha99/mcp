@@ -31,31 +31,42 @@ A comprehensive showcase of **Spring AI** capabilities combined with a robust Ob
 | `OPENAI_API_KEY` | Your OpenAI API Key |
 | `SPRING_AI_OTEL_ENDPOINT` | OTLP HTTP Endpoint for traces |
 
-## 🏃 Running the Application
+## 🏃 Running the Application (Windows / Minikube)
 
-### 1. Docker Compose (Full Stack)
+We provide a specialized PowerShell script `redeploy.ps1` to automate the deployment process.
+
+### 1. Prerequisite: Set Execution Policy
+If you haven't run scripts before, allow PowerShell to execute the local script:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+```
+
+### 2. First-Time Setup
+This will start Minikube, prompt you for your OpenAI Key, create the necessary secrets, and deploy the full stack.
+```powershell
+./redeploy.ps1 -Mode Initial
+```
+
+### 3. Redeploying Changes
+When you modify your code and want to see changes quickly, run the script in default mode. This only rebuilds and restarts the **App** and **Qdrant** (leaving MySQL/Grafana/Jaeger running).
+```powershell
+./redeploy.ps1
+```
+
+### 4. Accessing Services
+After deployment, use these Minikube commands to get the URLs:
+```bash
+minikube service spring-app --url
+minikube service grafana --url
+minikube service jaeger --url
+```
+
+## 🐳 Running with Docker Compose
 
 ```bash
 export OPENAI_API_KEY=your_key
 docker-compose up -d --build
 ```
-
-- **App**: http://localhost:8080
-- **Grafana**: http://localhost:3000 (Admin/Admin)
-- **Jaeger UI**: http://localhost:16686
-- **Prometheus**: http://localhost:9090
-
-### 2. Kubernetes (Minikube)
-
-1. **Start Minikube**: `minikube start`
-2. **Set Secret**: `kubectl create secret generic openai-secret --from-literal=OPENAI_API_KEY=your_key`
-3. **Deploy**: `kubectl apply -f k8s-deployment.yaml`
-4. **Access Services**:
-   ```bash
-   minikube service spring-app --url
-   minikube service grafana --url
-   minikube service jaeger --url
-   ```
 
 ## 📡 API Endpoints
 
