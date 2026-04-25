@@ -64,9 +64,9 @@ management:
       probability: 1.0
   otlp:
     tracing:
-      # Reverting to gRPC on 4317 to match your environment expectations
-      endpoint: ${SPRING_AI_OTEL_ENDPOINT:http://localhost:4317}
-      transport: grpc
+      # Use HTTP on port 4318 with the standard /v1/traces path
+      endpoint: ${SPRING_AI_OTEL_ENDPOINT:http://localhost:4318/v1/traces}
+      transport: http
   endpoints:
     web:
       exposure:
