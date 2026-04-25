@@ -2,8 +2,6 @@ package org.aashish.mcp.configuration;
 
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Disabling custom configuration to allow Spring Boot 3.3 auto-configuration 
