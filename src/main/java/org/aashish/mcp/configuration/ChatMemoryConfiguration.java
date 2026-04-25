@@ -1,5 +1,6 @@
 package org.aashish.mcp.configuration;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
 import javax.sql.DataSource;
 import org.aashish.mcp.advisor.TokenUsageAuditAdvisor;
@@ -18,30 +19,14 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/*
- @author ajha
-
-*/
 @Configuration
 public class ChatMemoryConfiguration {
 
-  /**
-   * Configures and provides a {@link JdbcChatMemoryRepository} bean.
-   * This repository is responsible for persisting and retrieving chat messages
-   * to and from a relational database, using the provided {@link DataSource}.
-   * It serves as the underlying storage mechanism for the {@link ChatMemory} implementation.
-   *
-   * @param dataSource The {@link DataSource} used to establish database connections.
-   * @return A fully configured {@link JdbcChatMemoryRepository} instance.
-   */
   @Bean
   public JdbcChatMemoryRepository jdbcChatMemoryRepository(DataSource dataSource) {
     return JdbcChatMemoryRepository.builder().dataSource(dataSource).build();
   }
 
-  /*
-   * ChatMemory bean that uses a JDBC repository to store conversation history in a database. The MessageWindowChatMemory implementation will keep the last 10 messages in memory for quick access, while the rest of the conversation history will be stored in the database.
-   */
   @Bean
   public ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository) {
     return MessageWindowChatMemory.builder()
@@ -50,20 +35,14 @@ public class ChatMemoryConfiguration {
         .build();
   }
 
-  /*
-   * Chat client bean with memory advisor added to the advisor chain. This will ensure that the
-   * conversation history is stored in the database and can be retrieved later for context in the conversation.
-   *
-   * The MessageChatMemoryAdvisor will automatically handle storing the conversation history in the database
-   *
-   */
   @Bean("chatMemoryClient")
   public ChatClient chatMemoryClient(
       OpenAiChatModel aiChatModel,
       ChatMemory chatMemory,
-      RetrievalAugmentationAdvisor advisor) {
+      RetrievalAugmentationAdvisor advisor,
+      MeterRegistry meterRegistry) {
     Advisor loggerAdvisor = new SimpleLoggerAdvisor();
-    Advisor tokenAdvisor = new TokenUsageAuditAdvisor();
+    Advisor tokenAdvisor = new TokenUsageAuditAdvisor(meterRegistry);
     Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
     ChatClient.Builder chatClient =
         ChatClient.builder(aiChatModel)
@@ -71,17 +50,12 @@ public class ChatMemoryConfiguration {
     return chatClient.build();
   }
 
-  /**
-   * Bean mehod for RAG
-   * @param vectorStore
-   * @return
-   */
   @Bean
   public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
     return RetrievalAugmentationAdvisor.builder()
         .documentRetriever(
             VectorStoreDocumentRetriever.builder()
-                .similarityThreshold(0.0) // Lowered threshold to ensure retrieval works
+                .similarityThreshold(0.0)
                 .topK(3)
                 .vectorStore(vectorStore)
                 .build())
