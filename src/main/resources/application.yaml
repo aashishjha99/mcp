@@ -64,9 +64,9 @@ management:
       probability: 1.0
   otlp:
     tracing:
-      # Use the OTLP HTTP port (4318) instead of gRPC (4317) to avoid "unexpected end of stream"
-      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
-      transport: http
+      # Reverting to gRPC on 4317 to match your environment expectations
+      endpoint: ${SPRING_AI_OTEL_ENDPOINT:http://localhost:4317}
+      transport: grpc
   endpoints:
     web:
       exposure:
