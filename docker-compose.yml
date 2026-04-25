@@ -17,8 +17,8 @@ services:
       - DB_NAME=spring_ai_db
       - DB_USER=root
       - DB_PASSWORD=root
-      # OpenTelemetry Endpoint for Jaeger
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      # OpenTelemetry Endpoint for Jaeger (targeting the HTTP port 4318)
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318/v1/traces
     networks:
       - spring-ai
     depends_on:
@@ -49,7 +49,8 @@ services:
     image: jaegertracing/all-in-one:latest
     ports:
       - "16686:16686"
-      - "4317:4317"
+      - "4317:4317" # gRPC
+      - "4318:4318" # OTLP HTTP - Added this port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     networks:
