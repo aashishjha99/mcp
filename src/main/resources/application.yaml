@@ -27,7 +27,7 @@ spring:
     allow-bean-definition-overriding: true
 
   application:
-    name: Spring AI project
+    name: mcp-service
 
   ai:
     openai:
@@ -37,9 +37,8 @@ spring:
           model: text-embedding-ada-002
       chat:
         options:
-          model: gpt-5-nano
+          model: gpt-4o
           temperature: 1
-          #max-tokens: 200
     vectorstore:
       qdrant:
         initialize-schema: true
@@ -51,8 +50,8 @@ spring:
       memory:
         repository:
           jdbc:
-            initialize-schema: always # Disable Spring AI JDBC chat memory schema initialization
-            #schema: classpath:memory-h2db.sql # This was likely H2 specific
+            initialize-schema: always
+
 logging:
   pattern:
     console: "%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n"
@@ -63,15 +62,10 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
   endpoints:
     web:
       exposure:
         include: health,metrics,prometheus
-
-opentelemetry:
-  exporter:
-    otlp:
-      endpoint: 'http://localhost:4317'
-
-
-
