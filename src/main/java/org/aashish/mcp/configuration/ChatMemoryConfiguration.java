@@ -81,7 +81,7 @@ public class ChatMemoryConfiguration {
     return RetrievalAugmentationAdvisor.builder()
         .documentRetriever(
             VectorStoreDocumentRetriever.builder()
-                .similarityThreshold(0.5)
+                .similarityThreshold(0.0) // Lowered threshold to ensure retrieval works
                 .topK(3)
                 .vectorStore(vectorStore)
                 .build())
