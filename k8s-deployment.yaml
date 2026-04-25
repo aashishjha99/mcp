@@ -1,4 +1,4 @@
-# Qdrant Service (internal networking)
+# Qdrant Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -31,10 +31,57 @@ spec:
     spec:
       containers:
         - name: qdrant
-          image: qdrant/qdrant:1.9.0 # Pin to a specific version for stability
+          image: qdrant/qdrant:latest
           ports:
             - containerPort: 6333
             - containerPort: 6334
+---
+# Jaeger Service (OTLP & UI)
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+spec:
+  selector:
+    app: jaeger
+  ports:
+    - name: ui
+      port: 16686
+      targetPort: 16686
+      nodePort: 31686
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+  type: NodePort
+---
+# Jaeger Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      containers:
+        - name: jaeger
+          image: jaegertracing/all-in-one:latest
+          env:
+            - name: COLLECTOR_OTLP_ENABLED
+              value: "true"
+          ports:
+            - containerPort: 16686
+            - containerPort: 4317
+            - containerPort: 4318
 ---
 # Prometheus ConfigMap
 apiVersion: v1
@@ -44,15 +91,12 @@ metadata:
 data:
   prometheus.yml: |
     global:
-      scrape_interval: 15s # How frequently to scrape targets by default.
-      evaluation_interval: 15s # Evaluate rules every 15 seconds.
-
+      scrape_interval: 15s
     scrape_configs:
       - job_name: 'spring-ai'
         metrics_path: '/actuator/prometheus'
-        scrape_interval: 15s
         static_configs:
-          - targets: ['spring-app:8080'] # Use the Kubernetes service name for the Spring app
+          - targets: ['spring-app:8080']
 ---
 # Prometheus Service
 apiVersion: v1
@@ -65,6 +109,8 @@ spec:
   ports:
     - port: 9090
       targetPort: 9090
+      nodePort: 30090
+  type: NodePort
 ---
 # Prometheus Deployment
 apiVersion: apps/v1
@@ -89,15 +135,50 @@ spec:
           volumeMounts:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/prometheus.yml
-              subPath: prometheus.yml # Mount only the file, not the directory
+              subPath: prometheus.yml
       volumes:
         - name: prometheus-config-volume
           configMap:
             name: prometheus-config
 ---
-# MySQL Service (internal networking)
+# Grafana Service
 apiVersion: v1
-kind: Service # Changed type from NodePort to default ClusterIP for security
+kind: Service
+metadata:
+  name: grafana
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 32000
+  type: NodePort
+---
+# Grafana Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+---
+# MySQL Service
+apiVersion: v1
+kind: Service
 metadata:
   name: mysql
 spec:
@@ -132,27 +213,8 @@ spec:
               value: "root"
             - name: MYSQL_DATABASE
               value: "spring_ai_db"
-          volumeMounts:
-            - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
-      volumes:
-        - name: mysql-persistent-storage
-          persistentVolumeClaim:
-            claimName: mysql-pvc
 ---
-# Persistent Volume Claim for MySQL
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-# Spring App Service (exposed via NodePort so you can access it in browser)
+# Spring App Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -191,7 +253,7 @@ spec:
       containers:
         - name: spring-app
           image: spring-ai-app:latest
-          imagePullPolicy: Never # Tells Kubernetes to use your locally built image
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
@@ -201,12 +263,13 @@ spec:
               value: "qdrant"
             - name: SPRING_AI_VECTORSTORE_QDRANT_PORT
               value: "6334"
+            - name: SPRING_AI_OTEL_ENDPOINT
+              value: "http://jaeger:4318/v1/traces"
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: openai-secret
                   key: OPENAI_API_KEY
-            # Hard-override the entire JDBC URL in Kubernetes so it is guaranteed to apply the fix
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:mysql://mysql:3306/spring_ai_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
             - name: SPRING_DATASOURCE_USERNAME
