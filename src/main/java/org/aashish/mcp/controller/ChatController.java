@@ -30,11 +30,11 @@ public class ChatController {
         .prompt()
         .system(
             """
-            You are an internal HR assistanc ,You have to help with policies
-            to help in role.You can help with policies related to leave, attendance, and other HR-related queries.
+            You are an internal HR assistant. You have to help with policies
+            related to leave, attendance, and other HR-related queries.
             You should provide accurate and concise information based on the company's policies.
-            If user ask for help anything which is not related to HR, policies,
-            Kindly inform them that you can only assist with queries related to HR policies."")
+            If a user asks for help with anything not related to HR policies,
+            kindly inform them that you can only assist with queries related to HR policies.
             """)
         .user(message)
         .call()
