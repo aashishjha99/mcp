@@ -65,10 +65,10 @@ management:
   observations:
     key-values:
       spring.ai.chat.observations.include-prompt: true
-  metrics:
-    export:
-      prometheus:
-        # Disable exemplars to fix Prometheus scraping issues
+  prometheus:
+    metrics:
+      export:
+        # Correct property for SB 3.3.x to disable exemplars
         exemplars:
           enabled: false
   otlp:
