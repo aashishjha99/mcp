@@ -65,6 +65,12 @@ management:
   observations:
     key-values:
       spring.ai.chat.observations.include-prompt: true
+  metrics:
+    export:
+      prometheus:
+        # Disable exemplars to fix Prometheus scraping issues
+        exemplars:
+          enabled: false
   otlp:
     tracing:
       # Use HTTP on port 4318 with the standard /v1/traces path
