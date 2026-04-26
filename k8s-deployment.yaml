@@ -48,7 +48,7 @@ spec:
     - name: ui
       port: 16686
       targetPort: 16686
-      nodePort: 31686
+      nodePort: 30686
     - name: otlp-grpc
       port: 4317
       targetPort: 4317
@@ -109,7 +109,7 @@ spec:
   ports:
     - port: 9090
       targetPort: 9090
-      nodePort: 30090
+      nodePort: 30909
   type: NodePort
 ---
 # Prometheus Deployment
@@ -156,6 +156,7 @@ data:
         url: http://prometheus:9090
         isDefault: true
         editable: true
+        uid: prometheus
 ---
 # Grafana Dashboard Provider ConfigMap
 apiVersion: v1
@@ -357,7 +358,7 @@ data:
         "from": "now-30m",
         "to": "now"
       },
-      "timepicker": {},
+      "timepicker": {密},
       "timezone": "",
       "title": "MCP Service Observability",
       "uid": "mcp-obs-1",
@@ -376,7 +377,7 @@ spec:
   ports:
     - port: 3000
       targetPort: 3000
-      nodePort: 32000
+      nodePort: 30300
   type: NodePort
 ---
 # Grafana Deployment
@@ -467,7 +468,7 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
-      nodePort: 30080
+      nodePort: 30808
 ---
 # Spring App Deployment
 apiVersion: apps/v1
