@@ -62,6 +62,9 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  observations:
+    key-values:
+      spring.ai.chat.observations.include-prompt: true
   otlp:
     tracing:
       # Use HTTP on port 4318 with the standard /v1/traces path
