@@ -25,6 +25,8 @@ By integrating **RAG (Retrieval-Augmented Generation)** with a complete observab
 - 📊 **Enterprise Observability**:
     - **Traces**: Distributed tracing with **OpenTelemetry** and **Jaeger**.
     - **Metrics**: Real-time monitoring with **Prometheus** and **Grafana**.
+
+![Grafana Dashboard](grafana-dashboard.png)
 - 🏗️ **Cloud Native**: Ready for deployment via **Docker Compose** or **Kubernetes (Minikube)**.
 
 ---
